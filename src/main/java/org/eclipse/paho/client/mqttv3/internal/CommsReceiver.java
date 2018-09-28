@@ -153,7 +153,8 @@ public class CommsReceiver implements Runnable {
 					} else {
 						// It its an ack and there is no token then something is not right.
 						// An ack should always have a token assoicated with it.
-						throw new MqttException(MqttException.REASON_CODE_UNEXPECTED_ERROR);
+                        System.out.println("@@@@@@@@@@@@@@@@@");
+						//throw new MqttException(MqttException.REASON_CODE_UNEXPECTED_ERROR);
 					}
 				} else {
 					if (message != null) {

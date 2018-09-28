@@ -49,7 +49,7 @@ public class DisconnectedMessageBuffer implements Runnable {
 	 * @param token the associated {@link MqttToken}
 	 * @throws MqttException if the Buffer is full
 	 */
-	public void putMessage(MqttWireMessage message, MqttToken token) throws MqttException{
+	public void putMessage(MqttWireMessage message, MqttToken token) throws MqttException{//여기에서 프로토콜이 어떤것인지 넣어줌
 		BufferedMessage bufferedMessage = new BufferedMessage(message, token);
 		synchronized (bufLock) {
 			if(buffer.size() < bufferOpts.getBufferSize()){

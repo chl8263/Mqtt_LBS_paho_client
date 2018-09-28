@@ -30,6 +30,7 @@ public class MultiByteInteger {
 	public MultiByteInteger(long value, int length) {
 		this.value = value;
 		this.length = length;
+		//System.out.println(value+" ,,,,,,,  " + length);
 	}
 	
 	/**

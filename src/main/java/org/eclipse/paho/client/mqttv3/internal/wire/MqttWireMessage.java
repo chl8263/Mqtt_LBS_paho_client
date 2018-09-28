@@ -15,13 +15,7 @@
  */
 package org.eclipse.paho.client.mqttv3.internal.wire;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttPersistable;
@@ -122,12 +116,17 @@ public abstract class MqttWireMessage {
 	        byte[] varHeader = getVariableHeader();
 	        int remLen = varHeader.length + getPayload().length;
 
+			System.out.println(remLen + "  ~~~~~~~~~~");
+
 	        ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	        DataOutputStream dos = new DataOutputStream(baos);
+
 	        dos.writeByte(first);
 	        dos.write(encodeMBI(remLen));
 	        dos.write(varHeader);
+
 	        dos.flush();
+			System.out.println("@#@#@#@#"+new String(varHeader,0,varHeader.length));
 	        return baos.toByteArray();
 	    } catch(IOException ioe) {
 	        throw new MqttException(ioe);
@@ -268,7 +267,15 @@ public abstract class MqttWireMessage {
 		int count = 0;
 		
 		do {
-			digit = in.readByte();
+			System.out.println("digit in !!!!");
+			try {
+				digit = in.readByte();
+				System.out.println("digit --> " + String.valueOf(digit));
+			}catch (EOFException e){
+				digit = (byte)(2);
+				System.out.println("@@@@@@@@@@@@@@@@@");
+				//return  new MultiByteInteger(msgLength, count);
+			}
 			count++;
 			msgLength += ((digit & 0x7F) * multiplier);
 			multiplier *= 128;
@@ -276,6 +283,8 @@ public abstract class MqttWireMessage {
 		
 		return new MultiByteInteger(msgLength, count);
 	}
+
+
 	
 	protected byte[] encodeMessageId() throws MqttException {
 		try {
@@ -354,6 +363,11 @@ public abstract class MqttWireMessage {
 
 	public String toString() {
 		return PACKET_NAMES[type];
+	}
+
+	private  byte readByte(){
+		int ch = 2;
+		return (byte)(ch);
 	}
 
 }

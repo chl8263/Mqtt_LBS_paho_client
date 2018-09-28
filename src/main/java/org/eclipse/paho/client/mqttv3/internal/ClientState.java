@@ -465,8 +465,15 @@ public class ClientState {
 
 			System.out.println("ClientState -> send");
 			System.out.print("ClientState send 보낼 메세지는-> ");
-			String a = new String(((MqttPublish) message).getMessage().getPayload());
+			String a = "";
+			try {
+				 a= new String(((MqttPublish) message).getMessage().getPayload());
+			}catch (ClassCastException e){
+				//a = new String(((MqttLbsManager) message).getMessage().getPayload());
+			}
 			System.out.println(a);
+			System.out.println("끼루루루루뤀 ++ ");
+			System.out.println(new String(message.getHeader()));
 
 				if(message instanceof MqttPublish  && (((MqttPublish) message).getMessage().getQos() != 0)){
 						message.setMessageId(getNextMessageId());
@@ -504,6 +511,11 @@ public class ClientState {
 				log.fine(CLASS_NAME,methodName,"628", new Object[]{new Integer(message.getMessageId()), new Integer(innerMessage.getQos()), message});
 
 				switch(innerMessage.getQos()) {
+					case 3:
+						System.out.println("ClientState -> qos3");
+						/*outboundQoS1.put(new Integer(message.getMessageId()), message);
+						persistence.put(getSendPersistenceKey(message), (MqttPublish) message);*/
+						break;
 					case 2:
 						System.out.println("ClientState -> qos2");
 						outboundQoS2.put(new Integer(message.getMessageId()), message);
@@ -517,8 +529,11 @@ public class ClientState {
 				}
 
 				tokenStore.saveToken(token, message);
+				System.out.println("1");
 				pendingMessages.addElement(message);
+				System.out.println("2");
 				queueLock.notifyAll();
+				System.out.println("3");
 			}
 		} else {
 

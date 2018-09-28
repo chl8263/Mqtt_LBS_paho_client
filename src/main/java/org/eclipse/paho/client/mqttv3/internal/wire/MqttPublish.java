@@ -166,6 +166,7 @@ public class MqttPublish extends MqttPersistableWireMessage {
 			encodeUTF8(dos, topicName);
 			if (message.getQos() > 0) {
 				dos.writeShort(msgId);
+				//dos.writeInt(20);
 			}
 			dos.flush();
 			return baos.toByteArray();

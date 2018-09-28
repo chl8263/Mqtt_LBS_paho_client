@@ -37,7 +37,7 @@ public class MqttMessage {
 	 * @throws IllegalArgumentException if value of QoS is not 0, 1 or 2.
 	 */
 	public static void validateQos(int qos) {
-		if ((qos < 0) || (qos > 2)) {
+		if ((qos < 0) || (qos > 3)) {
 			throw new IllegalArgumentException();
 		}
 	}

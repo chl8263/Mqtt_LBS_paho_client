@@ -574,13 +574,39 @@ public class MqttClient implements IMqttClient { //), DestinationProvider {
 		this.publish(topic, message);
 	}
 
+	private void lbsManager_real(String topic, MqttMessage message) throws MqttException,
+			MqttPersistenceException {
+		aClient.lbsManager(topic, message, null, null);
+		System.out.println("퍼블리시 !!");
+
+	}
+	private void lbsManager_middle(String topic, byte[] payload,int qos, boolean retained) throws MqttException,
+			MqttPersistenceException {
+		MqttMessage message = new MqttMessage(payload); //들어온 페이로드를 byte로 바구기만 하는 부분
+		message.setQos(qos);
+		message.setRetained(retained);
+		this.lbsManager_real(topic, message);
+
+	}
+	public void lbsManager( String id, String before_gu, String before_dong, String after_gu , String after_dong ) throws MqttException,
+			MqttPersistenceException {
+
+		byte[] payload = (id+"/"+before_gu+","+before_dong+"/"+after_gu+","+after_dong).getBytes();
+
+		this.lbsManager_middle("a", payload , 3 , false);
+
+	}
+
 	/*
 	 * @see IMqttClient#publishBlock(String, MqttMessage)
 	 */
 	public void publish(String topic, MqttMessage message) throws MqttException,
 			MqttPersistenceException {
+
 		aClient.publish(topic, message, null, null).waitForCompletion(getTimeToWait());
 	}
+
+
 
 	/**
 	 * Set the maximum time to wait for an action to complete.

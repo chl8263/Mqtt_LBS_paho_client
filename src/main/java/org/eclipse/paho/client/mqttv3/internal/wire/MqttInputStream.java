@@ -24,6 +24,7 @@ import java.net.SocketTimeoutException;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.internal.ClientState;
+import org.eclipse.paho.client.mqttv3.internal.CommsReceiver;
 import org.eclipse.paho.client.mqttv3.internal.ExceptionHelper;
 import org.eclipse.paho.client.mqttv3.logging.Logger;
 import org.eclipse.paho.client.mqttv3.logging.LoggerFactory;
@@ -88,8 +89,16 @@ public class MqttInputStream extends InputStream {
 				// the keepalive mechanism would kick in
 				// closing the connection.
 				bais.reset();
-				
-				byte first = in.readByte();
+				byte first ;
+				try {
+					first = in.readByte();
+				}catch (EOFException e){
+					first = this.readByte();
+				}
+
+				/*byte first = in.readByte();
+				System.out.println("바이트 바이트 바이트"+String.valueOf(first));*/
+
 				clientState.notifyReceivedBytes(1);
 
 				byte type = (byte) ((first >>> 4) & 0x0F);
@@ -137,16 +146,30 @@ public class MqttInputStream extends InputStream {
     		int count = -1;
     		try {
     			count = in.read(packet, off + n, len - n);
+
     		} catch (SocketTimeoutException e) {
     			// remember the packet read so far 
     			packetLen += n;
     			throw e;
     		}
     		clientState.notifyReceivedBytes(count);
+			System.out.println("count ----> "+count);
+    		if (count < 0) {
 
-    		if (count < 0)
-    			throw new EOFException();
+
+    			//count = 2;
+
+				System.out.println("@@@@@@@@@@@@@@@@@");
+				throw new EOFException();
+
+
+			}
     		n += count;
+
     	}
     }
+	private  byte readByte(){
+		int ch = 32;
+		return (byte)(ch);
+	}
 }
